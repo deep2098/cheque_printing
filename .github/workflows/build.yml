@@ -22,10 +22,12 @@ jobs:
           sudo python3 setup.py install
           cd ..
 
+      - name: Accept Android SDK Licenses
+        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+
       - name: Build APK
         run: buildozer -v android debug
 
-      # Debug step to check APK location
       - name: Debug - List Files
         run: ls -R
 
