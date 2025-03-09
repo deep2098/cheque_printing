@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/upload-artifact@v4
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
@@ -15,16 +15,22 @@ jobs:
           sudo apt install -y python3-pip git zip unzip openjdk-17-jdk
           pip install buildozer cython
 
-      - name: Build APK
+      - name: Set up Buildozer
         run: |
-          buildozer android debug
-        
-      - name: Debug - List Files
-        run: ls -R 
+          git clone https://github.com/kivy/buildozer.git
+          cd buildozer
+          sudo python3 setup.py install
+          cd ..
 
+      - name: Build APK
+        run: buildozer -v android debug
+
+      # Debug step to check APK location
+      - name: Debug - List Files
+        run: ls -R
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: app-release.apk
-          path: bin/*.apk
+          name: apk-build
+          path: bin/*.apk  # Ensure this is correct
