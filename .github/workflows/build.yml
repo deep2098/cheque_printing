@@ -22,8 +22,10 @@ jobs:
           sudo python3 setup.py install
           cd ..
 
-      - name: Accept Android SDK Licenses
-        run: yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+      - name: Install Android SDK Build Tools
+        run: |
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "build-tools;36.0.0-rc5" "platform-tools"
 
       - name: Build APK
         run: buildozer -v android debug
