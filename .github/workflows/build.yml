@@ -26,12 +26,25 @@ jobs:
         run: |
           export ANDROID_HOME=$HOME/.buildozer/android/platform/android-sdk
           export PATH=$ANDROID_HOME/cmdline-tools/latest/bin:$ANDROID_HOME/platform-tools:$PATH
+          
+          # Ensure the SDK directory exists
           mkdir -p $ANDROID_HOME/cmdline-tools
           cd $ANDROID_HOME/cmdline-tools
-          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip
+          
+          # Download and install Android SDK command-line tools
+          curl -o sdk-tools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
           unzip sdk-tools.zip -d latest
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --licenses
-          yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
+          mv latest/cmdline-tools latest/tools
+          
+          # Verify that sdkmanager exists
+          if [ ! -f "$ANDROID_HOME/cmdline-tools/latest/tools/bin/sdkmanager" ]; then
+            echo "Error: sdkmanager not found!"
+            exit 1
+          fi
+
+          # Accept licenses and install required packages
+          yes | $ANDROID_HOME/cmdline-tools/latest/tools/bin/sdkmanager --licenses
+          yes | $ANDROID_HOME/cmdline-tools/latest/tools/bin/sdkmanager "platform-tools" "build-tools;34.0.0" "platforms;android-34"
 
       - name: Build APK
         run: buildozer -v android debug
